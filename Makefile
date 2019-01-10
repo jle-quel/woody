@@ -24,6 +24,10 @@ SRC_NAME =	main.c			\
 			error.c			\
 			utils.c			\
 			elf.c			\
+			segment.c		\
+			section.c		\
+			header.c		\
+			payload.c		\
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 

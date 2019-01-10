@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+#include <string.h>
 
 ////////////////////////////////////////////////////////////////////////////////
 /// DEFINES 
@@ -26,8 +27,11 @@
 
 #define X86_64 2
 
+#define PAYLOAD_SIZE 46;
+#define PAGE_SIZE 4096;
+
 ////////////////////////////////////////////////////////////////////////////////
-/// ENUMS 
+/// ENUM
 ////////////////////////////////////////////////////////////////////////////////
 
 typedef enum
@@ -48,10 +52,10 @@ typedef enum
 
 typedef struct
 {
-	int insertion;
-	int new_entry;
-	int old_entry;
-	int filesize;
+	uint32_t insertion;
+	uint32_t new_entry;
+	uint32_t old_entry;
+	uint32_t filesize;
 	void *ptr;
 	char const *filename;
 } t_elf;
@@ -74,5 +78,13 @@ void release_elf(t_elf *elf);
 bool is_elf(t_elf const *elf);
 bool is_x86(t_elf const *elf);
 void *constructor(size_t const size);
+
+void modify_segments(t_elf *elf);
+void modify_sections(t_elf const *elf);
+void modify_header(t_elf *elf);
+
+char *get_payload(void);
+void set_payload(void);
+void modify_payload(t_elf const *elf);
 
 #endif

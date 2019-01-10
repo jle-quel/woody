@@ -1,7 +1,7 @@
 #include <woody.h>
 
 ////////////////////////////////////////////////////////////////////////////////
-/// STATIC FUNCTIONS
+/// STATIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
 static void woody(char const *filename)
@@ -15,12 +15,11 @@ static void woody(char const *filename)
 	if (is_x86(elf) == false)
 		error(WRONG_ARCHITECTURE, elf->filename);
 
-	puts("Woody");
-	
-//	modify_segments(elf);
-//	modify_sections(elf);
-//	modify_header(elf);
-//
+	modify_segments(elf);
+	modify_sections(elf);
+	modify_header(elf);
+//	modify_payload(elf);
+
 //	create_infected(elf);
 
 	release_elf(elf);
@@ -29,6 +28,11 @@ static void woody(char const *filename)
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
+
+void __attribute__ ((constructor)) start(void)
+{
+	set_payload();
+}
 
 int main(int ac, char **av)
 {
