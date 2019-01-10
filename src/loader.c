@@ -7,12 +7,14 @@
 #include <elf.h>
 #include <string.h>
 
-uint8_t shellcode[] = {
+uint8_t shellcode[] =
+{
 	0x57, 0x56, 0x52, 0xe8, 0x0c, 0x00, 0x00, 0x00, 0x2e, 0x2e,
 	0x2e, 0x57, 0x4f, 0x4f, 0x44, 0x59, 0x2e, 0x2e, 0x2e, 0x0a,
 	0xbf, 0x01, 0x00, 0x00, 0x00, 0x5e, 0xba, 0x0c, 0x00, 0x00,
 	0x00, 0xb8, 0x01, 0x00, 0x00, 0x00, 0x0f, 0x05, 0x5a, 0x5e,
-	0x5f, 0xeb, 0xd5, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	0x5f, 0xe9, 0xfc, 0xff, 0xff, 0xff
+};
 
 int shellcode_size = sizeof(shellcode);
 
@@ -27,11 +29,15 @@ int insertion_offset;
 int new_entry;
 int old_entry;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// STATIC FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void modify_payload()
 {
-	int entry = (old_entry - new_entry) - 46;
+	int result = (old_entry - new_entry) - 46;
 
-	memcpy(&shellcode[42], &new_entry, sizeof(int));
+	memcpy(&shellcode[42], &result, sizeof(int));
 }
 
 void modify_segments(void)
@@ -100,6 +106,7 @@ void create_file(void)
 		index++;
 	}
 	printf("%x\n", index);
+	
 	for (int i = 0; i < shellcode_size; i++)
 	{
 		tmp[index] = shellcode[i];
@@ -119,6 +126,10 @@ void create_file(void)
 
 	write(new_file, tmp, buf.st_size + 4096);
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// PUBLIC FUNCTION
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main(int ac, char **av)
 {
