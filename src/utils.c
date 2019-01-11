@@ -75,5 +75,5 @@ void _xorcpy(void *dst, void const *src, const size_t size, char const *key)
 	char const *src_tmp = src;
 
 	for (size_t index = 0; index < size; index++)
-		dst_tmp[index] = src_tmp[index] ^ key[index % (sizeof(key) / sizeof(char))];
+		dst_tmp[index] = src_tmp[index] ^ key[index % ASCII_SIZE];
 }
