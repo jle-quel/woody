@@ -7,7 +7,7 @@
 static inline void usage(char const *filename)
 {
 	(void)filename;
-	fprintf(stderr, "usage: woody_woodpacker [elf x86_64]\n");
+	fprintf(stderr, "usage: woody_woodpacker [elf x86_64] [key]\n");
 }
 
 static inline void wrong_format(char const *filename)

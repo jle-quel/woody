@@ -20,7 +20,7 @@
 /// DEFINES 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define VALID_ARGV_SIZE 2
+#define VALID_ARGV_SIZE 3
 
 #define ELF_MAGIC_SIZE 4
 #define ELF_MAGIC_NUMBER 1179403647
@@ -53,7 +53,8 @@ typedef enum
 
 typedef struct
 {
-	uint32_t insertion;
+	uint32_t old_offset;
+	uint32_t new_offset;
 	uint32_t new_entry;
 	uint32_t old_entry;
 	uint32_t filesize;
@@ -84,6 +85,10 @@ void modify_segments(t_elf *elf);
 void modify_sections(t_elf const *elf);
 void modify_header(t_elf *elf);
 
-void create_infected(t_elf const *elf);
+void create_infected(t_elf const *elf, char const *key);
+
+void _memcpy(void *dst, void const *src, size_t const size);
+void _memset(void *dst, int const c, const size_t size);
+void _xorcpy(void *dst, void const *src, const size_t size, char const *key);
 
 #endif

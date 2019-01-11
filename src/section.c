@@ -41,7 +41,7 @@ void modify_sections(t_elf const *elf)
 		if (corrupt == true)
 			section->sh_offset += PAGE_SIZE;
 
-		if (is_text(section, elf->insertion) == true)
+		if (is_text(section, elf->new_offset) == true)
 		{
 			section->sh_size += PAYLOAD_SIZE;
 			corrupt = true; 
