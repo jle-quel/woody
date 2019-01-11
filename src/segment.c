@@ -47,8 +47,6 @@ void modify_segments(t_elf *elf)
 		{
 			elf->insertion = segment->p_offset + segment->p_filesz;
 			elf->new_entry = segment->p_vaddr + segment->p_filesz;
-			printf("insertion: %x\n", elf->insertion);
-			printf("entry:     %x\n", elf->new_entry);
 
 			segment->p_filesz += PAYLOAD_SIZE;
 			segment->p_memsz += PAYLOAD_SIZE;

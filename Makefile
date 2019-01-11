@@ -15,6 +15,7 @@
 # **************************************************************************** #
 
 NAME = woody_woodpacker
+INFECTED = woody
 
 SRC_PATH = src
 OBJ_PATH = obj
@@ -27,7 +28,7 @@ SRC_NAME =	main.c			\
 			segment.c		\
 			section.c		\
 			header.c		\
-			payload.c		\
+			infection.c		\
 
 OBJ_NAME = $(SRC_NAME:.c=.o)
 

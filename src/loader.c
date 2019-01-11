@@ -36,6 +36,7 @@ int old_entry;
 void modify_payload()
 {
 	int result = (old_entry - new_entry) - 46;
+	printf("jmp offset: %x\n", result);
 
 	memcpy(&shellcode[42], &result, sizeof(int));
 }

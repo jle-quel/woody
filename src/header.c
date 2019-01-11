@@ -10,7 +10,7 @@ void modify_header(t_elf *elf)
 	
 	header = (Elf64_Ehdr *)elf->ptr;
 
-	header->e_shoff += 4096;
+	header->e_shoff += PAGE_SIZE;
 	elf->old_entry = header->e_entry;
 	header->e_entry = elf->new_entry;
 }

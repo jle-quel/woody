@@ -27,8 +27,9 @@
 
 #define X86_64 2
 
-#define PAYLOAD_SIZE 46;
-#define PAGE_SIZE 4096;
+#define PAYLOAD_SIZE 46
+#define JMP_INSERTION 42
+#define PAGE_SIZE 4096
 
 ////////////////////////////////////////////////////////////////////////////////
 /// ENUM
@@ -83,8 +84,6 @@ void modify_segments(t_elf *elf);
 void modify_sections(t_elf const *elf);
 void modify_header(t_elf *elf);
 
-char *get_payload(void);
-void set_payload(void);
-void modify_payload(t_elf const *elf);
+void create_infected(t_elf const *elf);
 
 #endif
