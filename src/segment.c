@@ -50,6 +50,7 @@ void modify_segments(t_elf *elf)
 
 			segment->p_filesz += PAYLOAD_SIZE;
 			segment->p_memsz += PAYLOAD_SIZE;
+			segment->p_flags |= PF_W;
 			corrupt = true;
 		}
 	}
