@@ -20,18 +20,19 @@
 /// DEFINES 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define VALID_ARGV_SIZE 3
+#define VALID_ARGV_SIZE 2
 
 #define ELF_MAGIC_SIZE 4
 #define ELF_MAGIC_NUMBER 1179403647
 
 #define X86_64 2
 
-#define PAYLOAD_SIZE 46
-#define JMP_INSERTION 42
+#define PAYLOAD_SIZE 54
 #define PAGE_SIZE 4096
 
-#define ASCII_SIZE 127
+#define KEY_SIZE 16
+
+#define VOID __attribute__((unused))
 
 ////////////////////////////////////////////////////////////////////////////////
 /// ENUM
@@ -57,9 +58,13 @@ typedef struct
 {
 	uint32_t old_offset;
 	uint32_t new_offset;
+
 	uint32_t new_entry;
 	uint32_t old_entry;
+
+	uint32_t v_addr;
 	uint32_t filesize;
+
 	void *ptr;
 	char const *filename;
 } t_elf;
@@ -87,10 +92,11 @@ void modify_segments(t_elf *elf);
 void modify_sections(t_elf const *elf);
 void modify_header(t_elf *elf);
 
-void create_infected(t_elf const *elf, char const *key);
+void create_infected(t_elf const *elf);
 
 void _memcpy(void *dst, void const *src, size_t const size);
 void _memset(void *dst, int const c, const size_t size);
-void _xorcpy(void *dst, void const *src, const size_t size, char const *key);
+void _xorcpy(void *dst, void const *src, const size_t size, char const *key, const size_t key_size);
+char *get_key(const size_t size);
 
 #endif

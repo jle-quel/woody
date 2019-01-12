@@ -38,12 +38,6 @@ t_elf *get_elf(char const *filename)
 
 	elf = (t_elf *)constructor(sizeof(t_elf));
 
-	elf->new_offset= 0;
-	elf->old_offset= 0;
-	elf->new_entry = 0;
-	elf->old_entry = 0;
-
-	elf->ptr = NULL;
 	elf->filename = filename;
 
 	map_file(elf);

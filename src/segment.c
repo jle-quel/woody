@@ -45,6 +45,7 @@ void modify_segments(t_elf *elf)
 
 		if (is_text(segment) == true)
 		{
+			elf->v_addr = segment->p_vaddr;
 			elf->old_offset = segment->p_offset;
 			elf->new_offset = segment->p_offset + segment->p_filesz;
 			elf->new_entry = segment->p_vaddr + segment->p_filesz;

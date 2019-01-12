@@ -4,10 +4,9 @@
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
-static inline void usage(char const *filename)
+static inline void usage(VOID char const *filename)
 {
-	(void)filename;
-	fprintf(stderr, "usage: woody_woodpacker [elf x86_64] [key]\n");
+	fprintf(stderr, "usage: woody_woodpacker [elf x86_64]\n");
 }
 
 static inline void wrong_format(char const *filename)
@@ -20,9 +19,8 @@ static inline void wrong_architecture(char const *filename)
 	fprintf(stderr, "\"%s\" is not an x86_64 binary\n", filename);
 }
 
-static inline void malloc_fail(char const *filename)
+static inline void malloc_fail(VOID char const *filename)
 {
-	(void)filename;
 	fprintf(stderr, "malloc failed to allocate memory\n");
 }
 
@@ -36,9 +34,8 @@ static inline void stat_fail(char const *filename)
 	fprintf(stderr, "error in getting information on file \"%s\"\n", filename);
 }
 
-static inline void mmap_fail(char const *filename)
+static inline void mmap_fail(VOID char const *filename)
 {
-	(void)filename;
 	fprintf(stderr, "mmap failed to allocate memory\n");
 }
 

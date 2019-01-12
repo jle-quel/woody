@@ -16,9 +16,9 @@ static inline Elf64_Shdr *get_section(t_elf const *elf, Elf64_Ehdr const *header
 	return section;
 }
 
-static inline bool is_text(Elf64_Shdr const *section, uint32_t insertion)
+static inline bool is_last_section(Elf64_Shdr const *section, uint32_t offset)
 {
-	if (section->sh_addr + section->sh_size != insertion)
+	if (section->sh_addr + section->sh_size != offset)
 		return false;
 
 	return true;
@@ -41,7 +41,7 @@ void modify_sections(t_elf const *elf)
 		if (corrupt == true)
 			section->sh_offset += PAGE_SIZE;
 
-		if (is_text(section, elf->new_offset) == true)
+		if (is_last_section(section, elf->new_offset) == true)
 		{
 			section->sh_size += PAYLOAD_SIZE;
 			corrupt = true; 

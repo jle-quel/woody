@@ -4,7 +4,7 @@
 /// STATIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-static void woody(char const *filename, char const *key)
+static void woody(char const *filename)
 {
 	t_elf *elf = NULL;
 
@@ -19,7 +19,7 @@ static void woody(char const *filename, char const *key)
 	modify_sections(elf);
 	modify_header(elf);
 
-	create_infected(elf, key);
+	create_infected(elf);
 
 	release_elf(elf);
 }
@@ -33,7 +33,7 @@ int main(int ac, char **av)
 	if (ac != VALID_ARGV_SIZE)
 		error(USAGE, NULL);
 
-	woody(av[1], av[2]);
+	woody(av[1]);
 
 	return 0;
 }

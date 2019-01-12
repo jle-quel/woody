@@ -35,6 +35,8 @@ void *constructor(size_t const size)
 	if ((ret = malloc(size)) == NULL)
 		error(MALLOC_FAIL, NULL);
 
+	bzero(ret, size);
+
 	return ret;
 }
 
@@ -64,16 +66,56 @@ void _memset(void *dst, int const c, const size_t size)
 
 }
 
-void _xorcpy(void *dst, void const *src, const size_t size, char const *key)
+void _xorcpy(void *dst, void const *src, const size_t size, char const *key, const size_t key_size)
 {
 	if (dst == NULL)
 		return ;
 	if (src == NULL)
+		return ;
+	if (key == NULL)
 		return ;
 
 	char *dst_tmp = dst;
 	char const *src_tmp = src;
 
 	for (size_t index = 0; index < size; index++)
-		dst_tmp[index] = src_tmp[index] ^ key[index % ASCII_SIZE];
+		dst_tmp[index] = src_tmp[index] ^ key[index % key_size];
+}
+
+bool _is_ascii(int c)
+{
+	if (c < 21)
+		return false;
+	if (c > 126)
+		return false;
+
+	return true;
+}
+
+char *get_key(const size_t size)
+{
+	char *key = NULL;
+	int fd = 0;
+	char c = 0;
+	size_t index = 0;
+
+	if ((key = malloc(size + 1)) == NULL)
+		error(MALLOC_FAIL, NULL);
+	if ((fd = open("/dev/random", O_RDONLY)) == -1)
+		error(WRONG_FD, NULL);
+
+	while (index < size)
+	{
+		if (read(fd, &c, 1) == -1)
+			error(WRONG_FD, NULL);
+		if (_is_ascii(c) == true)
+		{
+			key[index] = c;
+			index++;
+		}
+	}
+
+	key[index] = 0;
+
+	return key;
 }
