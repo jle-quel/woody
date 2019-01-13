@@ -16,7 +16,12 @@ static inline Elf64_Phdr *get_segment(t_elf const *elf, Elf64_Ehdr const *header
 	return segment;
 }
 
-static inline bool is_text(Elf64_Phdr const *segment)
+static inline void modify_segment(Elf64_Phdr *segment)
+{
+	segment->p_offset += PAGE_SIZE;
+}
+
+static inline bool is_text_segment(Elf64_Phdr const *segment)
 {
 	if (segment->p_type != PT_LOAD)
 		return false;
@@ -24,6 +29,21 @@ static inline bool is_text(Elf64_Phdr const *segment)
 		return false;
 
 	return true;
+}
+
+static inline void modify_elf(t_elf *elf, Elf64_Phdr const *segment)
+{
+	elf->old_offset = segment->p_offset;
+	elf->new_offset = segment->p_offset + segment->p_filesz;
+
+	elf->new_entry = segment->p_vaddr + segment->p_filesz;
+}
+
+static inline void modify_text_segment(Elf64_Phdr *segment)
+{
+	segment->p_filesz += PAYLOAD_SIZE;
+	segment->p_memsz += PAYLOAD_SIZE;
+	segment->p_flags |= PF_W;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,18 +61,13 @@ void modify_segments(t_elf *elf)
 		segment = get_segment(elf, header, index);
 
 		if (corrupt == true)
-			segment->p_offset += PAGE_SIZE;
+			modify_segment(segment);
 
-		if (is_text(segment) == true)
+		if (is_text_segment(segment) == true)
 		{
-			elf->v_addr = segment->p_vaddr;
-			elf->old_offset = segment->p_offset;
-			elf->new_offset = segment->p_offset + segment->p_filesz;
-			elf->new_entry = segment->p_vaddr + segment->p_filesz;
+			modify_elf(elf, segment);
+			modify_text_segment(segment);
 
-			segment->p_filesz += PAYLOAD_SIZE;
-			segment->p_memsz += PAYLOAD_SIZE;
-			segment->p_flags |= PF_W;
 			corrupt = true;
 		}
 	}

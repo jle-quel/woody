@@ -9,8 +9,8 @@ entry:
 ;	xor		r8, r8
 ;	xor		r9, r9
 ;
-;	lea		r8, [ rel loop ] ; p_vaddr segment text
-;	lea		r9, [ rel loop ] ; p_vaddr payload
+;	lea		r8, [ loop ] ; p_vaddr segment text
+;	lea		r9, [ loop ] ; p_vaddr payload
 ;
 ;loop:
 ;	cmp		r8, r9
