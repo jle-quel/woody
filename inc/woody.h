@@ -102,7 +102,7 @@ void create_infected(t_elf const *elf);
 
 void _memcpy(void *dst, void const *src, size_t const size);
 void _memset(void *dst, int const c, const size_t size);
-void _xorcpy(void *dst, void const *src, const size_t size, char const *key, const size_t key_size);
+void _xorcpy(void *dst, void const *src, const size_t size, char const key);
 char *get_key(const size_t size);
 
 #endif

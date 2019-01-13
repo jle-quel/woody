@@ -27,7 +27,7 @@ static inline void set_payload(t_elf const *elf)
 	_memcpy(&payload[82], &entry, sizeof(int));
 }
 
-static void write_on_memory(t_elf const *elf, void *ptr, VOID char const *key)
+static void write_on_memory(t_elf const *elf, void *ptr)
 {
 	_memcpy(ptr, elf->ptr, elf->text_offset);
 	_memcpy(ptr + elf->text_offset, elf->ptr + elf->text_offset, elf->text_size); // XOR
@@ -49,22 +49,17 @@ void create_infected(t_elf const *elf)
 {
 	int fd = 0;
 	char *ptr = NULL;
-	char *key = NULL;
 	char const *filename = "woody";
 
 	if ((fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0700)) == -1)
 		error(WRONG_FD, filename); 
 	if ((ptr = mmap(NULL, elf->filesize + PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
 		error(MMAP_FAIL, filename);
-	key = get_key(KEY_SIZE);
-
-	printf("encryption key \"%s\"\n", key);
 
 	set_payload(elf);
-	write_on_memory(elf, ptr, key);
+	write_on_memory(elf, ptr);
 	write(fd, ptr, elf->filesize + PAGE_SIZE);
 
-	free(key);
 	munmap(ptr, elf->filesize + PAGE_SIZE);
 	close(fd);
 }
