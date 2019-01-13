@@ -27,7 +27,7 @@
 
 #define X86_64 2
 
-#define PAYLOAD_SIZE 54 
+#define PAYLOAD_SIZE 86
 #define PAGE_SIZE 4096
 
 #define KEY_SIZE 16

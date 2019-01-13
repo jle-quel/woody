@@ -5,22 +5,6 @@ entry:
 	push	r8
 	push	r9
 
-;init_decrypter:
-;	xor		r8, r8
-;	xor		r9, r9
-;
-;	lea		r8, [ loop ] ; p_vaddr segment text
-;	lea		r9, [ loop ] ; p_vaddr payload
-;
-;loop:
-;	cmp		r8, r9
-;	je		init_payload
-;
-;	inc		r8
-;
-;	jmp loop
-
-
 init_payload:
 	call	payload
 	db		"...WOODY...", 0xa
@@ -32,8 +16,23 @@ payload:
 
 	mov		rax, 0x1
 	syscall
+	
+init_decrypter:
+	xor		r8, r8
+	xor		r9, r9
 
-end_payload:
+	lea		r8, [ loop ] ; p_vaddr section text
+	lea		r9, [ loop ] ; p_vaddr payload
+
+loop:
+	cmp		r8, r9
+	je		end_decrypter
+
+	inc		r8
+
+	jmp loop
+
+end_decrypter:
 	pop		r9
 	pop		r8
 	pop		rdx
@@ -41,3 +40,4 @@ end_payload:
     pop		rdi
 
 	jmp		0xcafebabe ; old entry
+
