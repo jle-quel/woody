@@ -28,6 +28,19 @@ bool is_x86(t_elf const *elf)
 	return true;
 }
 
+bool is_executable(t_elf const *elf)
+{
+	Elf64_Ehdr const *header = (Elf64_Ehdr const *)elf->ptr;
+
+	if (elf->ptr + sizeof(Elf64_Ehdr) >= elf->ptr + elf->filesize)
+		error(CORRUPTION, elf->filename);
+
+	if (header->e_entry == 0)
+		return false;
+
+	return true;
+}
+
 void *constructor(size_t const size)
 {
 	void	*ret = NULL;

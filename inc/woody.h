@@ -27,15 +27,12 @@
 
 #define X86_64 2
 
-#define PAYLOAD_SIZE 86
+#define PAYLOAD_SIZE 32
 #define PAGE_SIZE 4096
 
 #define KEY_SIZE 16
 
 #define VOID __attribute__((unused))
-
-#define DYN_TEXT 0x8d
-#define EXEC_TEXT 0x77
 
 ////////////////////////////////////////////////////////////////////////////////
 /// ENUM
@@ -46,6 +43,7 @@ typedef enum
 	USAGE,
 	WRONG_FORMAT,
 	WRONG_ARCHITECTURE,
+	NOT_EXEC,
 	MALLOC_FAIL,
 	WRONG_FD,
 	STAT_FAIL,
@@ -59,19 +57,20 @@ typedef enum
 
 typedef struct
 {
-	uint32_t old_offset;
-	uint32_t new_offset;
+	Elf64_Addr entrypoint;
 
-	uint32_t old_entry;
-	uint32_t new_entry;
+	Elf64_Off segment_offset;
+	Elf64_Addr segment_addr;
+	Elf64_Xword segment_size;
 
-	uint32_t text_addr;
-	uint32_t text_offset;
-	uint32_t text_size;
+	Elf64_Off section_offset;
+	Elf64_Addr section_addr;
+	Elf64_Xword section_size;
 
-	uint32_t filesize;
+	Elf64_Off end_file;
 
 	void *ptr;
+	size_t filesize;
 	char const *filename;
 } t_elf;
 
@@ -92,6 +91,7 @@ void release_elf(t_elf *elf);
 
 bool is_elf(t_elf const *elf);
 bool is_x86(t_elf const *elf);
+bool is_executable(t_elf const *elf);
 void *constructor(size_t const size);
 
 void modify_segments(t_elf *elf);

@@ -19,6 +19,11 @@ static inline void wrong_architecture(char const *filename)
 	fprintf(stderr, "\"%s\" is not an x86_64 binary\n", filename);
 }
 
+static inline void not_executable(char const *filename)
+{
+	fprintf(stderr, "\"%s\" is not executable\n", filename);
+}
+
 static inline void malloc_fail(VOID char const *filename)
 {
 	fprintf(stderr, "malloc failed to allocate memory\n");
@@ -53,6 +58,7 @@ const t_vector vector[] =
 	(const t_vector){USAGE, &usage},
 	(const t_vector){WRONG_FORMAT, &wrong_format},
 	(const t_vector){WRONG_ARCHITECTURE, &wrong_architecture},
+	(const t_vector){NOT_EXEC, &not_executable},
 	(const t_vector){MALLOC_FAIL, &malloc_fail},
 	(const t_vector){WRONG_FD, &wrong_fd},
 	(const t_vector){STAT_FAIL, &stat_fail},
@@ -62,7 +68,7 @@ const t_vector vector[] =
 
 void error(t_error const err, char const *filename)
 {
-	static const uint8_t limit = 8;
+	static const uint8_t limit = 9;
 
 	for (uint8_t index = 0; index < limit; index++)
 	{

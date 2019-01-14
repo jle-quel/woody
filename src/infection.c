@@ -1,22 +1,10 @@
 #include <woody.h>
 
-uint8_t payload[] =
-{
-	0x57, 0x56, 0x52, 0x41, 0x50, 0x41, 0x51, 0xe8, 0x0c, 0x00,
-	0x00, 0x00, 0x2e, 0x2e, 0x2e, 0x57, 0x4f, 0x4f, 0x44, 0x59,
-	0x2e, 0x2e, 0x2e, 0x0a, 0xbf, 0x01, 0x00, 0x00, 0x00, 0x5e,
-	0xba, 0x0c, 0x00, 0x00, 0x00, 0xb8, 0x01, 0x00, 0x00, 0x00,
-	0x0f, 0x05, 0x4d, 0x31, 0xc0, 0x4d, 0x31, 0xc9, 0x4c, 0x8d,
-	0x04, 0x25, 0x40, 0x10, 0x40, 0x00, 0x4c, 0x8d, 0x0c, 0x25,
-	0x40, 0x10, 0x40, 0x00, 0x4d, 0x39, 0xc8, 0x74, 0x05, 0x49,
-	0xff, 0xc0, 0xeb, 0xf6, 0x41, 0x59, 0x41, 0x58, 0x5a, 0x5e,
-	0x5f, 0xe9, 0xba, 0xba, 0xfe, 0xca
-};
-
 ////////////////////////////////////////////////////////////////////////////////
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
+/*
 static inline void set_payload(t_elf const *elf)
 {
 	printf("%zu\n", sizeof(payload));
@@ -26,19 +14,47 @@ static inline void set_payload(t_elf const *elf)
 	_memcpy(&payload[60], &elf->new_entry, sizeof(int));
 	_memcpy(&payload[82], &entry, sizeof(int));
 }
+*/
 
-static void write_on_memory(t_elf const *elf, void *ptr)
+static void write_on_memory(t_elf const *elf, char *ptr)
 {
-	_memcpy(ptr, elf->ptr, elf->text_offset);
-	_memcpy(ptr + elf->text_offset, elf->ptr + elf->text_offset, elf->text_size); // XOR
-//	_xorcpy(ptr + elf->text_offset, elf->ptr + elf->text_offset, elf->text_size, key, KEY_SIZE);
-	_memcpy(ptr + elf->text_offset + elf->text_size, elf->ptr + elf->text_offset + elf->text_size, elf->new_offset - elf->text_offset - elf->text_size);
+	Elf64_Off const beg_encrypt = elf->section_offset;
+	Elf64_Off const end_encrypt = elf->section_offset + elf->section_size;
+	Elf64_Off const beg_payload = elf->segment_offset + elf->segment_size;
+	Elf64_Off const end_payload = elf->segment_offset + elf->segment_size + PAGE_SIZE;
+	Elf64_Off const end_file = elf->filesize + PAGE_SIZE;
 
-	_memset(ptr + elf->new_offset, 0, PAGE_SIZE);
-	_memcpy(ptr + elf->new_offset + PAGE_SIZE, elf->ptr + elf->new_offset, (elf->filesize - elf->new_offset) + PAGE_SIZE);
+	size_t index = 0;
+	char *dst = ptr;
+	char *src = elf->ptr;
 
-	_memcpy(ptr + elf->new_offset, payload, PAYLOAD_SIZE);
+	while (index < beg_encrypt)
+	{
+		*dst++ = *src++;
+		index++;
+	}
+	while (index < end_encrypt)
+	{
+		*dst++ = *src++;
+		index++;
+	}
+	while (index < beg_payload)
+	{
+		*dst++ = *src++;
+		index++;
+	}
 
+	while (index < end_payload)
+	{
+		*dst++ = 0;
+		index++;
+	}
+
+	while (index < end_file)
+	{
+		*dst++ = *src++;
+		index++;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,7 +72,7 @@ void create_infected(t_elf const *elf)
 	if ((ptr = mmap(NULL, elf->filesize + PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
 		error(MMAP_FAIL, filename);
 
-	set_payload(elf);
+//	set_payload(elf);
 	write_on_memory(elf, ptr);
 	write(fd, ptr, elf->filesize + PAGE_SIZE);
 

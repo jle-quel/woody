@@ -14,6 +14,8 @@ static void woody(char const *filename)
 		error(WRONG_FORMAT, elf->filename);
 	if (is_x86(elf) == false)
 		error(WRONG_ARCHITECTURE, elf->filename);
+	if (is_executable(elf) == false)
+		error(NOT_EXEC, elf->filename);
 
 	modify_segments(elf);
 	modify_sections(elf);

