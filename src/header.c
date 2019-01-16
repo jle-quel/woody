@@ -13,10 +13,9 @@ void modify_header(t_elf *elf)
 	if (elf->ptr + sizeof(Elf64_Ehdr) >= elf->ptr + elf->filesize)
 		error(CORRUPTION, elf->filename);
 
-	header->e_shoff += PAGE_SIZE;
-	header->e_shstrndx += 1;
-	header->e_shnum += 1;
+	*(uint32_t *)&header->e_ident[EI_PAD] = PACK_MAGIC_NUMBER;
 
-	elf->entrypoint = header->e_entry;
-//	header->e_entry = elf->segment_addr + elf->segment_size;
+	header->e_shoff += PAGE_SIZE;
+	elf->old_entrypoint = header->e_entry;
+	header->e_entry = elf->segment_addr + elf->segment_size;
 }

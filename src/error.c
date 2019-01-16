@@ -49,6 +49,11 @@ static inline void corruption(char const *filename)
 	fprintf(stderr, "file \"%s\" is corrupted or truncated\n", filename);
 }
 
+static inline void packed(char const *filename)
+{
+	fprintf(stderr, "file \"%s\" is already packed\n", filename);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
@@ -64,11 +69,12 @@ const t_vector vector[] =
 	(const t_vector){STAT_FAIL, &stat_fail},
 	(const t_vector){MMAP_FAIL, &mmap_fail},
 	(const t_vector){CORRUPTION, &corruption},
+	(const t_vector){PACKED, &packed},
 };
 
 void error(t_error const err, char const *filename)
 {
-	static const uint8_t limit = 9;
+	static const uint8_t limit = 10;
 
 	for (uint8_t index = 0; index < limit; index++)
 	{

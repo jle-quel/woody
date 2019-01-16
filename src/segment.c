@@ -45,9 +45,6 @@ void modify_segments(t_elf *elf)
 
 		if (is_entrypoint_segment(header, segment) == true)
 		{
-			printf("PARASITE beg segment at offset: %lx\n", segment->p_offset); // DEBUG
-			printf("PARASITE eng segment at offset: %lx\n", segment->p_offset + segment->p_filesz); // DEBUG
-			
 			elf->segment_offset = segment->p_offset;
 			elf->segment_addr = segment->p_vaddr;
 			elf->segment_size = segment->p_filesz;

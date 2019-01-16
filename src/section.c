@@ -16,14 +16,9 @@ static inline Elf64_Shdr *get_section(t_elf const *elf, Elf64_Ehdr const *header
 	return section;
 }
 
-static inline bool is_symtab_section(Elf64_Shdr const *section)
-{
-	return section->sh_type == SHT_SYMTAB;
-}
-
 static inline bool is_entrypoint_section(Elf64_Ehdr const *header, Elf64_Shdr const *section)
 {
-	return header->e_entry == section->sh_addr;
+	return header->e_entry >= section->sh_addr && header->e_entry < section->sh_addr + section->sh_size;
 }
 
 static inline bool is_last_section(Elf64_Shdr const *section, t_elf const *elf)
@@ -47,15 +42,9 @@ void modify_sections(t_elf *elf)
 		
 		if (corrupt == true)
 			section->sh_offset += PAGE_SIZE;
-
-		if (is_symtab_section(section) == true)
-			section->sh_link += 1;
 		
 		if (is_entrypoint_section(header, section) == true)
 		{
-			printf("ENCRYPT beg section at offset: %lx\n", section->sh_offset); // DEBUG
-			printf("ENCRYPT end section at offset: %lx\n", section->sh_offset + section->sh_size); // DEBUG
-			
 			elf->section_offset = section->sh_offset;
 			elf->section_addr = section->sh_addr;
 			elf->section_size = section->sh_size;
@@ -63,8 +52,7 @@ void modify_sections(t_elf *elf)
 
 		if (is_last_section(section, elf) == true)
 		{
-			//section->sh_size += PAYLOAD_SIZE;
-			elf->new_section = header->e_shoff + (sizeof(Elf64_Shdr) * (index + 1));
+			section->sh_size += PAYLOAD_SIZE;
 
 			corrupt = true; 
 		}

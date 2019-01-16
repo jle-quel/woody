@@ -9,10 +9,7 @@ bool is_elf(t_elf const *elf)
 	if (elf->ptr + ELF_MAGIC_SIZE >= elf->ptr + elf->filesize)
 		error(CORRUPTION, elf->filename);
 
-	if (*(uint32_t *)elf->ptr != ELF_MAGIC_NUMBER)
-		return false;
-
-	return true;
+	return *(uint32_t *)elf->ptr == ELF_MAGIC_NUMBER;
 }
 
 bool is_x86(t_elf const *elf)
@@ -22,10 +19,17 @@ bool is_x86(t_elf const *elf)
 	if (elf->ptr + sizeof(Elf64_Ehdr) >= elf->ptr + elf->filesize)
 		error(CORRUPTION, elf->filename);
 
-	if (header->e_ident[EI_CLASS] != X86_64)
-		return false;
+	return header->e_ident[EI_CLASS] == X86_64;
+}
 
-	return true;
+bool is_packed(t_elf const *elf)
+{
+	Elf64_Ehdr const *header = (Elf64_Ehdr const *)elf->ptr;
+
+	if (elf->ptr + sizeof(Elf64_Ehdr) >= elf->ptr + elf->filesize)
+		error(CORRUPTION, elf->filename);
+
+	return *(uint32_t *)((char *)&header->e_ident[EI_PAD]) == PACK_MAGIC_NUMBER;
 }
 
 bool is_executable(t_elf const *elf)
@@ -35,10 +39,7 @@ bool is_executable(t_elf const *elf)
 	if (elf->ptr + sizeof(Elf64_Ehdr) >= elf->ptr + elf->filesize)
 		error(CORRUPTION, elf->filename);
 
-	if (header->e_entry == 0)
-		return false;
-
-	return true;
+	return header->e_entry != 0;
 }
 
 void *constructor(size_t const size)
@@ -129,17 +130,4 @@ char *get_key(const size_t size)
 	key[index] = 0;
 
 	return key;
-}
-
-Elf64_Shdr *get_new_section(t_elf const *elf)
-{
-	Elf64_Shdr *section = NULL;
-
-	section = (Elf64_Shdr *)constructor(sizeof(Elf64_Shdr));
-
-	section->sh_offset = elf->segment_offset + elf->segment_size;
-	section->sh_size = PAGE_SIZE;
-	section->sh_addr = elf->segment_addr + elf->segment_size;
-
-	return section;
 }

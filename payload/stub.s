@@ -1,9 +1,9 @@
 entry:
+	push	rax
     push    rdi
     push    rsi
     push    rdx
 	push	r8
-	push	r9
 
 init_payload:
 	call	payload
@@ -19,25 +19,31 @@ payload:
 	
 init_decrypter:
 	xor		r8, r8
-	xor		r9, r9
+	xor		rax, rax
 
-	lea		r8, [ loop ] ; p_vaddr section text
-	lea		r9, [ loop ] ; p_vaddr payload
+	mov		eax, 0x42
+	lea		r8, [ rel loop ] ; p_vaddr section text
 
 loop:
-	cmp		r8, r9
+	cmp		eax, 0x0
 	je		end_decrypter
+	
+	xor		rdx, rdx
+	mov		dl, byte[r8]
+	xor		dl, 42
+	mov		byte[r8], dl
 
+	dec		eax
 	inc		r8
 
 	jmp loop
 
 end_decrypter:
-	pop		r9
 	pop		r8
 	pop		rdx
     pop		rsi
     pop		rdi
+	pop		rax
 
-	jmp		0xcafebabe ; old entry
+	jmp		0xcafebabe ; p_vaddr section text
 
