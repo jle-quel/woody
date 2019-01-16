@@ -14,6 +14,9 @@ void modify_header(t_elf *elf)
 		error(CORRUPTION, elf->filename);
 
 	header->e_shoff += PAGE_SIZE;
+	header->e_shstrndx += 1;
+	header->e_shnum += 1;
+
 	elf->entrypoint = header->e_entry;
 //	header->e_entry = elf->segment_addr + elf->segment_size;
 }

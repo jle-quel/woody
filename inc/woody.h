@@ -27,7 +27,7 @@
 
 #define X86_64 2
 
-#define PAYLOAD_SIZE 32
+#define PAYLOAD_SIZE 46
 #define PAGE_SIZE 4096
 
 #define KEY_SIZE 16
@@ -58,6 +58,7 @@ typedef enum
 typedef struct
 {
 	Elf64_Addr entrypoint;
+	Elf64_Off new_section;
 
 	Elf64_Off segment_offset;
 	Elf64_Addr segment_addr;
@@ -66,8 +67,6 @@ typedef struct
 	Elf64_Off section_offset;
 	Elf64_Addr section_addr;
 	Elf64_Xword section_size;
-
-	Elf64_Off end_file;
 
 	void *ptr;
 	size_t filesize;
@@ -104,5 +103,6 @@ void _memcpy(void *dst, void const *src, size_t const size);
 void _memset(void *dst, int const c, const size_t size);
 void _xorcpy(void *dst, void const *src, const size_t size, char const key);
 char *get_key(const size_t size);
+Elf64_Shdr *get_new_section(t_elf const *elf);
 
 #endif

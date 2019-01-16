@@ -130,3 +130,16 @@ char *get_key(const size_t size)
 
 	return key;
 }
+
+Elf64_Shdr *get_new_section(t_elf const *elf)
+{
+	Elf64_Shdr *section = NULL;
+
+	section = (Elf64_Shdr *)constructor(sizeof(Elf64_Shdr));
+
+	section->sh_offset = elf->segment_offset + elf->segment_size;
+	section->sh_size = PAGE_SIZE;
+	section->sh_addr = elf->segment_addr + elf->segment_size;
+
+	return section;
+}

