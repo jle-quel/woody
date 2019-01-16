@@ -21,7 +21,7 @@ make
 ./woody
 ```
 
-## Blueprint
+## Description
 
 This project is part of the System/Unix cursus at 42.
 
