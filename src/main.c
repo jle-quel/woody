@@ -1,43 +1,51 @@
 #include <woody.h>
 
-////////////////////////////////////////////////////////////////////////////////
-/// STATIC FUNCTION
-////////////////////////////////////////////////////////////////////////////////
-
-static void woody(char const *filename)
+typedef struct
 {
-	t_elf *elf = NULL;
+	int ac;
+	void (*f)(char **av);
+} t_state;
 
-	elf = get_elf(filename);
+////////////////////////////////////////////////////////////////////////////////
+/// STATIC FUNCTIONS
+////////////////////////////////////////////////////////////////////////////////
 
-	if (is_elf(elf) == false)
-		error(WRONG_FORMAT, elf->filename);
-	if (is_x86(elf) == false)
-		error(WRONG_ARCHITECTURE, elf->filename);
-	if (is_packed(elf) == true)
-		error(PACKED, elf->filename);
-	if (is_executable(elf) == false)
-		error(NOT_EXEC, elf->filename);
+static inline void init_random_woody(char **av)
+{
+	char *key = NULL;
 
-	modify_segments(elf);
-	modify_sections(elf);
-	modify_header(elf);
+	key = generate_key(DEFAULT_SIZE);
+	woody(av[1], key);
+	free(key);
+}
 
-	create_infected(elf);
-
-	release_elf(elf);
+static inline void init_argv_woody(char **av)
+{
+	woody(av[1], av[2]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
+static const t_state state[] =
+{
+	(const t_state){MIN_ARGV_SIZE, &init_random_woody},
+	(const t_state){MAX_ARGV_SIZE, &init_argv_woody},
+};
+
 int main(int ac, char **av)
 {
-	if (ac != VALID_ARGV_SIZE)
-		error(USAGE, NULL);
+	const uint8_t limit = 2;
 
-	woody(av[1]);
+	for (uint8_t index = 0; index < limit; index++)
+	{
+		if (ac == state[index].ac)
+		{
+			state[index].f(av);
+			exit(0);
+		}
+	}
 
-	return 0;
+	error(USAGE, NULL);
 }

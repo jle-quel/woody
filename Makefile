@@ -22,6 +22,7 @@ OBJ_PATH = obj
 INC_PATH = inc
 
 SRC_NAME =	main.c			\
+			woody.c			\
 			error.c			\
 			utils.c			\
 			elf.c			\

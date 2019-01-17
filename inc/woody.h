@@ -20,7 +20,8 @@
 /// DEFINES 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define VALID_ARGV_SIZE 2
+#define MIN_ARGV_SIZE 2
+#define MAX_ARGV_SIZE 3
 
 #define ELF_MAGIC_SIZE 4
 #define ELF_MAGIC_NUMBER 1179403647
@@ -31,7 +32,7 @@
 #define PAYLOAD_SIZE 94
 #define PAGE_SIZE 4096
 
-#define KEY_SIZE 16
+#define DEFAULT_SIZE 16
 
 #define VOID __attribute__((unused))
 
@@ -74,15 +75,11 @@ typedef struct
 	char const *filename;
 } t_elf;
 
-typedef struct
-{
-	t_error const err;
-	void (*f)(char const *str);
-} t_vector;
-
 ////////////////////////////////////////////////////////////////////////////////
 /// PROTOTYPES; 
 ////////////////////////////////////////////////////////////////////////////////
+
+void woody(char const *filename, char const *key);
 
 void error(t_error const err, char const *filename);
 
@@ -98,12 +95,12 @@ void modify_segments(t_elf *elf);
 void modify_sections(t_elf *elf);
 void modify_header(t_elf *elf);
 
-void create_infected(t_elf const *elf);
+void create_infected(t_elf const *elf, char const *key);
 
 void _memcpy(void *dst, void const *src, size_t const size);
 void _memset(void *dst, int const c, const size_t size);
 void _xorcpy(void *dst, void const *src, const size_t size, char const key);
-char *get_key(const size_t size);
+char *generate_key(const size_t size);
 bool is_packed(t_elf const *elf);
 
 #endif

@@ -1,5 +1,11 @@
 #include <woody.h>
 
+typedef struct
+{
+	t_error const err;
+	void (*f)(char const *str);
+} t_state;
+
 ////////////////////////////////////////////////////////////////////////////////
 /// STATIC FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,18 +64,18 @@ static inline void packed(char const *filename)
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-const t_vector vector[] =
+static const t_state state[] =
 {
-	(const t_vector){USAGE, &usage},
-	(const t_vector){WRONG_FORMAT, &wrong_format},
-	(const t_vector){WRONG_ARCHITECTURE, &wrong_architecture},
-	(const t_vector){NOT_EXEC, &not_executable},
-	(const t_vector){MALLOC_FAIL, &malloc_fail},
-	(const t_vector){WRONG_FD, &wrong_fd},
-	(const t_vector){STAT_FAIL, &stat_fail},
-	(const t_vector){MMAP_FAIL, &mmap_fail},
-	(const t_vector){CORRUPTION, &corruption},
-	(const t_vector){PACKED, &packed},
+	(const t_state){USAGE, &usage},
+	(const t_state){WRONG_FORMAT, &wrong_format},
+	(const t_state){WRONG_ARCHITECTURE, &wrong_architecture},
+	(const t_state){NOT_EXEC, &not_executable},
+	(const t_state){MALLOC_FAIL, &malloc_fail},
+	(const t_state){WRONG_FD, &wrong_fd},
+	(const t_state){STAT_FAIL, &stat_fail},
+	(const t_state){MMAP_FAIL, &mmap_fail},
+	(const t_state){CORRUPTION, &corruption},
+	(const t_state){PACKED, &packed},
 };
 
 void error(t_error const err, char const *filename)
@@ -78,10 +84,10 @@ void error(t_error const err, char const *filename)
 
 	for (uint8_t index = 0; index < limit; index++)
 	{
-		if (err == vector[index].err)
+		if (err == state[index].err)
 		{
-			vector[index].f(filename);
-			exit(vector[index].err);
+			state[index].f(filename);
+			exit(state[index].err);
 		}
 	}
 }

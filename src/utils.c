@@ -104,7 +104,7 @@ bool _is_ascii(int c)
 	return true;
 }
 
-char *get_key(const size_t size)
+char *generate_key(const size_t size)
 {
 	char *key = NULL;
 	int fd = 0;

@@ -78,7 +78,7 @@ static void write_on_memory(t_elf const *elf, char *ptr)
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-void create_infected(t_elf const *elf)
+void create_infected(t_elf const *elf, VOID char const *key)
 {
 	int fd = 0;
 	char *ptr = NULL;
