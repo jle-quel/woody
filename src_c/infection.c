@@ -30,7 +30,7 @@ static inline void set_payload(t_elf const *elf)
 	_memcpy(&payload[PAYLOAD_SIZE - size], &entry_point, size);
 }
 
-static void write_on_memory(t_elf const *elf, char *ptr)
+static void write_on_memory(t_elf const *elf, char *ptr, VOID char const *key)
 {
 	Elf64_Off const beg_encrypt = elf->section_offset + (elf->old_entrypoint - elf->section_addr);
 	Elf64_Off const end_encrypt = elf->section_offset + elf->section_size;
@@ -78,10 +78,11 @@ static void write_on_memory(t_elf const *elf, char *ptr)
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-void create_infected(t_elf const *elf, VOID char const *key)
+void create_infected(t_elf const *elf)
 {
 	int fd = 0;
 	char *ptr = NULL;
+	char *key = NULL;
 	char const *filename = "woody";
 
 	if ((fd = open(filename, O_RDWR | O_CREAT | O_TRUNC, 0700)) == -1)
@@ -89,10 +90,13 @@ void create_infected(t_elf const *elf, VOID char const *key)
 	if ((ptr = mmap(NULL, elf->filesize + PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0)) == MAP_FAILED)
 		error(MMAP_FAIL, filename);
 
+	key = generate_key(DEFAULT_SIZE);
+
 	set_payload(elf);
-	write_on_memory(elf, ptr);
+	write_on_memory(elf, ptr, key);
 	write(fd, ptr, elf->filesize + PAGE_SIZE);
 
 	munmap(ptr, elf->filesize + PAGE_SIZE);
 	close(fd);
+	free(key);
 }

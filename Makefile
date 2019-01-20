@@ -25,6 +25,7 @@ INC_PATH = inc
 
 SRC_NAME_C =	main.c			\
 				woody.c			\
+				key.c			\
 				error.c			\
 				utils.c			\
 				elf.c			\

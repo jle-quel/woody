@@ -20,8 +20,7 @@
 /// DEFINES 
 ////////////////////////////////////////////////////////////////////////////////
 
-#define MIN_ARGV_SIZE 2
-#define MAX_ARGV_SIZE 3
+#define VALID_AV_SIZE 2
 
 #define ELF_MAGIC_SIZE 4
 #define ELF_MAGIC_NUMBER 1179403647
@@ -79,28 +78,22 @@ typedef struct
 /// PROTOTYPES; 
 ////////////////////////////////////////////////////////////////////////////////
 
-void woody(char const *filename, char const *key);
+void woody(char const *filename);
 
 void error(t_error const err, char const *filename);
 
 t_elf *get_elf(char const *filename);
 void release_elf(t_elf *elf);
 
-bool is_elf(t_elf const *elf);
-bool is_x86(t_elf const *elf);
-bool is_executable(t_elf const *elf);
-void *constructor(size_t const size);
-
 void modify_segments(t_elf *elf);
 void modify_sections(t_elf *elf);
 void modify_header(t_elf *elf);
+void create_infected(t_elf const *elf);
 
-void create_infected(t_elf const *elf, char const *key);
-
+void *constructor(size_t const size);
 void _memcpy(void *dst, void const *src, size_t const size);
 void _memset(void *dst, int const c, const size_t size);
-void _xorcpy(void *dst, void const *src, const size_t size, char const key);
+
 char *generate_key(const size_t size);
-bool is_packed(t_elf const *elf);
 
 #endif
