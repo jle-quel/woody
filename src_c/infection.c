@@ -29,8 +29,6 @@ static inline void set_payload(t_elf const *elf, char *key)
 	Elf64_Off const limit = elf->section_size - (elf->old_entrypoint - elf->section_addr);
 	size_t const size = sizeof(int);
 
-	printf("%zu\n", sizeof(payload));
-
 	_memcpy(&payload[50], &entry_encryption, size);
 	_memcpy(&payload[55], &limit, size);
 	_memcpy(&payload[61], key + 8, 8);
@@ -49,8 +47,6 @@ static void write_on_memory(t_elf const *elf, char *ptr, char const *key)
 	size_t index = 0;
 	char *dst = ptr;
 	char *src = elf->ptr;
-
-	(void)key;
 
 	while (index < beg_encrypt)
 	{
