@@ -3,7 +3,8 @@ entry:
     push    rdi
     push    rsi
     push    rdx
-	push	r8
+	push	rcx
+	push	rbx
 
 init_payload:
 	call	payload
@@ -16,34 +17,55 @@ payload:
 
 	mov		rax, 0x1
 	syscall
-	
+
 init_decrypter:
-	xor		r8, r8
+	xor		rdx, rdx
+	xor		rcx, rcx
+
+	lea		rdi, [ rel entry ]		; section_text 
+	mov		rsi, 0x42				; section_text size
+	mov		rdx, qword '12345678'	; 8 last key bytes
+	push	rdx
+	mov		rdx, qword '12345678'	; 8 first key bytes
+	push	rdx
+
+beg_loop:
+	cmp		ecx, esi
+	je		end_decrypter
+
+get_index:
+	xor		rax, rax
+	xor		rdx, rdx
+	xor		rbx, rbx
+
+	mov		rax, rcx
+	mov		rbx, 0x10
+	idiv	rbx
+
+	mov		rbx, rdx				; modulo
+
+xor_char:
 	xor		rax, rax
 
-	mov		eax, 0x42
-	lea		r8, [ rel loop ] ; p_vaddr section text
+	mov		al, [rdi + rcx]
+	xor		al, [rsp + rbx]
+	mov		[rdi + rcx], al
 
-loop:
-	cmp		eax, 0x0
-	je		end_decrypter
+end_loop:
+	inc		ecx
+
+	jmp		beg_loop
 	
-	xor		rdx, rdx
-	mov		dl, byte[r8]
-	xor		dl, 42
-	mov		byte[r8], dl
-
-	dec		eax
-	inc		r8
-
-	jmp loop
-
 end_decrypter:
-	pop		r8
-	pop		rdx
-    pop		rsi
-    pop		rdi
+	pop		rax
 	pop		rax
 
-	jmp		0xcafebabe ; p_vaddr section text
+	pop		rbx
+	pop		rcx
+	pop		rdx
+	pop		rsi
+	pop		rdi
+	pop		rax
+
+	jmp		0xcafebabe				; p_vaddr section text
 

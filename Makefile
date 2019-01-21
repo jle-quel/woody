@@ -34,7 +34,7 @@ SRC_NAME_C =	main.c			\
 				header.c		\
 				infection.c		\
 
-SRC_NAME_S =	stub.s			\
+SRC_NAME_S =	xor.s			\
 
 OBJ_NAME_C = $(SRC_NAME_C:.c=.o)
 OBJ_NAME_S = $(SRC_NAME_S:.s=.o)

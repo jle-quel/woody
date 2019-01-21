@@ -28,7 +28,7 @@
 
 #define X86_64 2
 
-#define PAYLOAD_SIZE 94
+#define PAYLOAD_SIZE 137
 #define PAGE_SIZE 4096
 
 #define DEFAULT_SIZE 16
@@ -95,5 +95,7 @@ void _memcpy(void *dst, void const *src, size_t const size);
 void _memset(void *dst, int const c, const size_t size);
 
 char *generate_key(const size_t size);
+
+void _xor(char *str, size_t const size, char const *key);
 
 #endif

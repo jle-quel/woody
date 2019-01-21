@@ -5,9 +5,9 @@ _xor:
 	push	rbp
 	mov		rbp, rsp
 
-	push	rdi ; str
-	push	rsi ; str size
-	push	rdx ; key
+	push	rdi 		; str
+	push	rsi 		; str size
+	push	rdx 		; key
 	push	rcx
 	push	rbx
 
@@ -28,7 +28,7 @@ get_index:
 	mov		rbx, 0x10
 	idiv	rbx
 
-	mov		rbx, rdx ; index
+	mov		rbx, rdx 	; index
 	pop		rdx
 
 xor_char:
