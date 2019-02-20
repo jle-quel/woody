@@ -1,15 +1,10 @@
 # Woody Woodpacker 
 
-## Description
+## Introduction
 
-```
-Woody Woodpacker
+This project is part of the System/Unix cursus at 42.
 
-Usage:
-
-	./woody_woodpacker [elf x86_64]
-
-```
+The idea is quite simple, the packer will receive an executable (ET_EXEC or ET_DYN), and create a new binary that has the same comportement.
 
 ## Installation
 
@@ -22,10 +17,6 @@ make
 ```
 
 ## Description
-
-This project is part of the System/Unix cursus at 42.
-
-The idea is quite simple, the packer will receive an executable (ET_EXEC or ET_DYN), and create a new binary that has the same comportement.
 
 The step are represented like this:
 - verification of the given file
