@@ -26,6 +26,11 @@ static inline bool is_last_section(Elf64_Shdr const *section, t_elf const *elf)
 	return section->sh_offset + section->sh_size == elf->segment_offset + elf->segment_size;
 }
 
+static inline bool is_section_corrupted(t_elf *elf)
+{
+	return elf->section_offset >= elf->filesize;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,5 +62,7 @@ void modify_sections(t_elf *elf)
 			corrupt = true; 
 		}
 	}
-}
 
+	if (section == NULL || is_section_corrupted(elf) == true)
+		error(CORRUPTION, elf->filename);
+}

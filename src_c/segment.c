@@ -26,6 +26,11 @@ static inline bool is_entrypoint_segment(Elf64_Ehdr const *header, Elf64_Phdr co
 	return true;
 }
 
+static inline bool is_segment_corrupted(t_elf const *elf)
+{
+	return elf->segment_offset >= elf->filesize;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,4 +61,7 @@ void modify_segments(t_elf *elf)
 			corrupt = true;
 		}
 	}
+
+	if (segment == NULL || is_segment_corrupted(elf) == true)
+		error(CORRUPTION, elf->filename);
 }
