@@ -18,9 +18,4 @@ void modify_header(t_elf *elf)
 	header->e_shoff += PAGE_SIZE;
 	elf->old_entrypoint = header->e_entry;
 	header->e_entry = elf->segment_addr + elf->segment_size;
-	
-	if (elf->old_entrypoint >= elf->filesize)
-		error(CORRUPTION, elf->filename);
-	if ((void *)header->e_entry >= elf->ptr + elf->filesize)
-		error(CORRUPTION, elf->filename);
 }

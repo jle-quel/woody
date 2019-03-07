@@ -50,7 +50,7 @@ void modify_sections(t_elf *elf)
 	for (uint32_t index = 0; index < header->e_shnum; index++)
 	{
 		section = get_section(elf, header, index);
-		
+
 		if (corrupt == true)
 			section->sh_offset += PAGE_SIZE;
 		

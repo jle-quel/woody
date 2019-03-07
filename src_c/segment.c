@@ -70,5 +70,4 @@ void modify_segments(t_elf *elf)
 
 	if (segment == NULL || is_segment_corrupted(elf) == true)
 		error(CORRUPTION, elf->filename);
-
 }

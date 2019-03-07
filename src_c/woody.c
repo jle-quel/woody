@@ -42,6 +42,13 @@ static inline bool is_executable(t_elf const *elf)
 	return header->e_entry != 0;
 }
 
+static inline bool is_corrupted(t_elf const *elf)
+{
+	Elf64_Ehdr const *header = (Elf64_Ehdr const *)elf->ptr;
+
+	return header->e_shoff + (header->e_shnum * sizeof(Elf64_Shdr)) != elf->filesize;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,6 +67,8 @@ void woody(char const *filename)
 		error(PACKED, elf->filename);
 	if (is_executable(elf) == false)
 		error(NOT_EXEC, elf->filename);
+	if (is_corrupted(elf) == true)
+		error(CORRUPTION, elf->filename);
 
 	modify_segments(elf);
 	modify_sections(elf);
