@@ -26,7 +26,7 @@ get_index:
 
 	mov		rax, rcx
 	mov		rbx, 0x10
-	idiv	rbx
+	idiv		rbx
 
 	mov		rbx, rdx 	; index
 	pop		rdx

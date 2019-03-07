@@ -28,7 +28,13 @@ static inline bool is_last_section(Elf64_Shdr const *section, t_elf const *elf)
 
 static inline bool is_section_corrupted(t_elf *elf)
 {
-	return elf->section_offset >= elf->filesize;
+	if (elf->section_offset >= elf->filesize)
+		return true;
+
+	if (elf->section_size == 0)
+		return true;
+	
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -75,7 +75,7 @@ static void write_on_memory(t_elf const *elf, char *ptr, char const *key)
 		*dst++ = *src++;
 		index++;
 	}
-
+	
 	_memcpy(ptr + beg_payload, payload, PAYLOAD_SIZE);
 	_xor(ptr + beg_encrypt, end_encrypt - beg_encrypt, key);
 }
