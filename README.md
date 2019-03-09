@@ -4,7 +4,7 @@
 
 This project is part of the System/Unix cursus at 42.
 
-The idea is quite simple, the packer will receive an executable (ET_EXEC or ET_DYN), and create a new binary that has the same comportement.
+The idea is quite simple, the crypter will receive an executable (ET_EXEC or ET_DYN), and create a new binary that has the same comportement.
 
 ## Installation
 
