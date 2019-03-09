@@ -52,7 +52,10 @@ void modify_segments(t_elf *elf)
 		segment = get_segment(elf, header, index);
 
 		if (corrupt == true)
+		{
+			segment->p_flags |= PF_W;
 			segment->p_offset += PAGE_SIZE;
+		}
 
 		if (is_entrypoint_segment(header, segment) == true)
 		{

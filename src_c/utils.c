@@ -41,3 +41,16 @@ void _memset(void *dst, int const c, const size_t size)
 		dst_tmp[index] = c; 
 
 }
+
+size_t _strlen(const char *str)
+{
+	size_t index = 0;
+
+	if (str == NULL)
+		return 0;
+
+	while (str[index])
+		index++;
+
+	return index;
+}
