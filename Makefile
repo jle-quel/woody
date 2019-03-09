@@ -39,7 +39,7 @@ SRC_NAME_S =	rc4.s
 OBJ_NAME_C = $(SRC_NAME_C:.c=.o)
 OBJ_NAME_S = $(SRC_NAME_S:.s=.o)
 
-CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror
 
 RED=[1;31m
 GREEN=[1;32m
