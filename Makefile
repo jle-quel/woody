@@ -24,22 +24,22 @@ OBJ_PATH_S = obj_s
 INC_PATH = inc
 
 SRC_NAME_C =	main.c			\
-				woody.c			\
-				key.c			\
-				error.c			\
-				utils.c			\
-				elf.c			\
-				segment.c		\
-				section.c		\
-				header.c		\
-				infection.c		\
+		woody.c			\
+		key.c			\
+		error.c			\
+		utils.c			\
+		elf.c			\
+		segment.c		\
+		section.c		\
+		header.c		\
+		infection.c
 
-SRC_NAME_S =	xor.s			\
+SRC_NAME_S =	rc4.s
 
 OBJ_NAME_C = $(SRC_NAME_C:.c=.o)
 OBJ_NAME_S = $(SRC_NAME_S:.s=.o)
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address
 
 RED=[1;31m
 GREEN=[1;32m

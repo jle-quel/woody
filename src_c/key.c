@@ -16,9 +16,9 @@ bool _is_digit(int c)
 /// PUBLIC FUNCTION
 ////////////////////////////////////////////////////////////////////////////////
 
-char *generate_key(const size_t size)
+unsigned char *generate_key(const size_t size)
 {
-	char *key = NULL;
+	unsigned char *key = NULL;
 	int fd = 0;
 	char c = 0;
 	size_t index = 0;

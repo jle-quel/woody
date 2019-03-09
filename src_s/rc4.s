@@ -1,49 +1,7 @@
 section .text
-global entry
+global _rc4
 
-entry:
-	push	rax
-	push	rdi
-	push	rsi
-	push	rdx
-	push	rcx
-	push	r8
-	push	r9
-	push	r10
-
-init_payload:
-	call	payload
-	.string	db "...WOODY...", 0xa
-
-payload:
-	mov	rdi, 0x1
-	pop	rsi
-	mov	rdx, 0xc
-
-	mov	rax, 0x1
-	syscall
-
-	call	init_rc4
-	.string	db "12345678", 0x0
-
-init_rc4:
-	pop	rdi
-	mov	byte[rdi + 0x0], '*'
-	mov	byte[rdi + 0x1], '*'
-	mov	byte[rdi + 0x2], '*'
-	mov	byte[rdi + 0x3], '*'
-	mov	byte[rdi + 0x4], '*'
-	mov	byte[rdi + 0x5], '*'
-	mov	byte[rdi + 0x6], '*'
-	mov	byte[rdi + 0x7], '*'
-	mov	rsi, 0x8
-	lea	rdx, [ rel entry ]
-	mov	rcx, 0x42
-
-	call	rc4
-	jmp	end
-
-rc4:
+_rc4:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 0x188
@@ -109,18 +67,5 @@ j4:
 
 j3:
 	add	rsp,0x188
-
 	leave
 	ret
-
-end:
-	pop	r10
-	pop	r9
-	pop	r8
-	pop	rcx
-	pop	rdx
-	pop	rsi
-	pop	rdi
-	pop	rax
-
-	jmp	0xcafebabe
