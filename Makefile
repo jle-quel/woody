@@ -1,86 +1,69 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: jle-quel <jle-quel@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2018/12/07 10:51:42 by jle-quel          #+#    #+#              #
-#    Updated: 2018/12/14 15:51:39 by jle-quel         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
+################################################################################
+### INIT
+################################################################################
 
-# **************************************************************************** #
-# INIT
-# **************************************************************************** #
+NAME		= woody_woodpacker
+INFECTED	= woody
 
-NAME = woody_woodpacker
-INFECTED = woody
+SRC_PATH_C	= src/c
+SRC_PATH_S	= src/asm
 
-SRC_PATH_C = src_c
-OBJ_PATH_C = obj_c
-SRC_PATH_S = src_s
-OBJ_PATH_S = obj_s
-INC_PATH = inc
+OBJ_PATH_C	= obj/c
+OBJ_PATH_S	= obj/asm
 
-SRC_NAME_C =	main.c			\
-		woody.c			\
-		key.c			\
-		error.c			\
-		utils.c			\
-		elf.c			\
-		segment.c		\
-		section.c		\
-		header.c		\
-		infection.c
+INC_PATH	= inc
 
-SRC_NAME_S =	rc4.s
+CC		= gcc
+AS		= nasm
+CFLAGS		= -Wall -Wextra -Werror -I $(INC_PATH)
+ASFLAGS		= -f elf64
 
-OBJ_NAME_C = $(SRC_NAME_C:.c=.o)
-OBJ_NAME_S = $(SRC_NAME_S:.s=.o)
+################################################################################
+### OBJECTS 
+################################################################################
 
-CFLAGS = -Wall -Wextra -Werror
+OBJ_NAME_C	=	main.o						\
+			woody.o						\
+			key.o						\
+			error.o						\
+			utils.o						\
+			elf.o						\
+			segment.o					\
+			section.o					\
+			header.o					\
+			infection.o					\
 
-RED=[1;31m
-GREEN=[1;32m
-NC=[0m
+OBJ_NAME_S	=	rc4.o						\
 
-SRC_C = $(addprefix $(SRC_PATH_C)/,$(SRC_NAME_C))
-SRC_S = $(addprefix $(SRC_PATH_S)/,$(SRC_NAME_S))
-OBJ_C = $(addprefix $(OBJ_PATH_C)/,$(OBJ_NAME_C))
-OBJ_S = $(addprefix $(OBJ_PATH_S)/,$(OBJ_NAME_S))
+OBJ		=	$(addprefix $(OBJ_PATH_C)/,$(OBJ_NAME_C))	\
+			$(addprefix $(OBJ_PATH_S)/,$(OBJ_NAME_S))
+
+################################################################################
+### RULES
+################################################################################
 
 .PHONY: all, clean, fclean, re
 
-# **************************************************************************** #
-# COMPILATION 
-# **************************************************************************** #
+all: obj $(NAME)
 
-all: $(NAME)
+obj:
+	mkdir -p obj/c obj/asm
 
-$(NAME): $(OBJ_C) $(OBJ_S)
-	@gcc $(CFLAGS) $^ -o $@
+$(NAME): $(OBJ)
+	$(CC) $(CFLAGS) $^ -o $@
 
 $(OBJ_PATH_C)/%.o: $(SRC_PATH_C)/%.c Makefile
-	@mkdir $(OBJ_PATH_C) 2> /dev/null || true
-	@gcc $(CFLAGS) -c $< -o $@ -I$(INC_PATH)
-	@echo "$(GREEN)[✓]$(NC) Source compiled : $<"
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_PATH_S)/%.o: $(SRC_PATH_S)/%.s Makefile
-	@mkdir $(OBJ_PATH_S) 2> /dev/null || true
-	@nasm -f elf64 $< -o $@
-	@echo "$(GREEN)[✓]$(NC) Source compiled : $<"
+	$(AS) $(ASFLAGS) $< -o $@
 
 clean:
-	@rm -f $(OBJ_C) $(OBJ_S)
-	@rmdir $(OBJ_PATH_C) $(OBJ_PATH_S) 2> /dev/null || true
-	@echo "$(RED)[-]$(NC) Objects cleaned"
+	rm -rf $(OBJ)
 
 fclean: clean
-	@rm -rf $(NAME)
-	@rm -rf $(INFECTED)
-	@echo "$(RED)[-]$(NC) Program clear"
+	rm -rf obj
+	rm -rf $(NAME)
+	rm -rf $(INFECTED)
 
-re:fclean
-	@make
-
+re: fclean all
