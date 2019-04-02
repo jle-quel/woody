@@ -78,17 +78,6 @@ static void write_on_memory(t_elf const *elf, char *ptr, const unsigned char *ke
 	char *dst = ptr;
 	char *src = elf->ptr;
 
-	while (index < beg_encrypt)
-	{
-		*dst++ = *src++;
-		index++;
-	}
-	while (index < end_encrypt)
-	{
-		*dst++ = *src++;
-		index++;
-	}
-
 	while (index < beg_payload)
 	{
 		*dst++ = *src++;
@@ -99,7 +88,6 @@ static void write_on_memory(t_elf const *elf, char *ptr, const unsigned char *ke
 		*dst++ = 0;
 		index++;
 	}
-
 	while (index < end_file)
 	{
 		*dst++ = *src++;
